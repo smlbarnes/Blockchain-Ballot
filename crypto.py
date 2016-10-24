@@ -2,6 +2,24 @@
 import sys
 import random
 
+# Definition for a public key
+class PublicKey:
+    def __init__(self, n, e):
+        # 'n' is a product of the two primes chosen for the key
+        self.n = n
+
+        # 'e' is the public exponent used to encrypt messages
+        self.e = e
+
+# Definition for a private key
+class PrivateKey:
+    def __init__(self, n, d):
+        # 'n' is a product of the two primes chosen for the key
+        self.n = n
+
+        # 'd' is the modular inverse of e mod phi(n)
+        self.d = d
+
 # Perform an 'n' round Miller-Rabin primality test (default 40 rounds has fault rate of 2^-128)
 def millerRabin(number, rounds=40):
 
@@ -103,3 +121,84 @@ def generateRSAPrime():
         # Return the number if it is a probable prime
         if isProbablePrime(possiblePrime):
             return possiblePrime
+
+# Calculate modular inverse (a^-1 mod c)
+def modularInverse(a, c):
+
+    # Set 'b' as 'c' for use in the algorithm
+    b = c
+
+    # Set initial Bezout Coefficients
+    coefficientT = 0
+    lastCoefficientT = 1
+    coefficientS = 1
+    lastCoefficientS = 0
+
+    # Loop until a GCD is found
+    gcdFound = False
+    while not gcdFound:
+
+        # Calculate the quotient for this round
+        quotient = a // b
+
+        # Calculate the remainder for this round
+        a, b = b, a % b
+
+        # Check if the GCD has been found
+        if (b == 0):
+            gcdFound = True
+
+        # Calculate the coefficients for this round
+        coefficientT, lastCoefficientT = lastCoefficientT - quotient * coefficientT, coefficientT
+        coefficientS, lastCoefficientS = lastCoefficientS - quotient * coefficientS, coefficientS
+
+    # Return the calculated inverse
+    return lastCoefficientT % c
+
+# Encrypt plaintext using a public key
+def encrypt(publicKey, plaintext):
+    cyphertext = pow(plaintext, publicKey.e, publicKey.n)
+    return cyphertext
+
+# Decrypt cyphertext using a private key
+def decrypt(privateKey, cyphertext):
+    plaintext = pow(cyphertext, privateKey.d, privateKey.n)
+    return plaintext
+
+# Generate an RSA private key and related public key
+def generateRSAKeyPair():
+
+    # Get 2 RSA suitable prime numbers
+    firstPrime = generateRSAPrime()
+    secondPrime = generateRSAPrime()
+
+    # Ensure the primes are distinct
+    if firstPrime == secondPrime:
+
+        # Reattempt the generation
+        return generateRSAKeyPair()
+
+    # Compute composite number 'n'
+    n = firstPrime * secondPrime
+
+    # Compute the phi of 'n'
+    phiN = (firstPrime - 1) * (secondPrime - 1)
+
+    # Compute a coprime of 'phiN', 'e' where 1 < e < phiN
+    eFound = False
+    while not eFound:
+        e = random.randrange(2, phiN)
+        if isProbablePrime(e) and e % phiN != 0:
+            eFound = True
+
+    # Compute 'd', the modular inverse of 'e' 'phiN', d = e^-1 mod phiN
+    d = modularInverse(e, phiN)
+
+    # Create the public key
+    public = PublicKey(n, e)
+
+    # Create the private key
+    private = PrivateKey(n, d)
+
+    # Return the key pair
+    return public, private
