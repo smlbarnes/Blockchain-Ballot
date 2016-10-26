@@ -1,24 +1,33 @@
-# Import required modules
+ # Import required modules
 import sys
 import random
 
 # Definition for a public key
 class PublicKey:
-    def __init__(self, n, e):
+    def __init__(self, n, g):
+
         # 'n' is a product of the two primes chosen for the key
         self.n = n
 
-        # 'e' is the public exponent used to encrypt messages
-        self.e = e
+        # 'g' is the public exponent used to encrypt messages
+        self.g = g
 
 # Definition for a private key
 class PrivateKey:
-    def __init__(self, n, d):
+    def __init__(self, n, phiN, u):
+
         # 'n' is a product of the two primes chosen for the key
         self.n = n
 
-        # 'd' is the modular inverse of e mod phi(n)
-        self.d = d
+        # 'phiN' is the phi of the two primes chosen for the key
+        self.phiN = phiN
+
+        # 'u' is the modular inverse of e mod phi(n)
+        self.u = u
+
+# Generate a random number of 'n' bits from the system entropy function
+def randomNumber(bits):
+    return random.SystemRandom().getrandbits(bits)
 
 # Perform an 'n' round Miller-Rabin primality test (default 40 rounds has fault rate of 2^-128)
 def millerRabin(number, rounds=40):
@@ -105,12 +114,8 @@ def isProbablePrime(number):
         # The number failed the test
         return False
 
-# Generate a random number of 'n' bits from the system entropy function
-def randomNumber(bits):
-    return random.SystemRandom().getrandbits(bits)
-
-# Generate a probable prime suitable for use in RSA
-def generateRSAPrime():
+# Generate a probable prime suitable for use in public key encryption
+def generatePrime():
 
     # Loop until a suitable prime is found
     while True:
@@ -155,28 +160,18 @@ def modularInverse(a, c):
     # Return the calculated inverse
     return lastCoefficientT % c
 
-# Encrypt plaintext using a public key
-def encrypt(publicKey, plaintext):
-    cyphertext = pow(plaintext, publicKey.e, publicKey.n)
-    return cyphertext
+# Generate a Paillier private key and related public key
+def generateKeyPair():
 
-# Decrypt cyphertext using a private key
-def decrypt(privateKey, cyphertext):
-    plaintext = pow(cyphertext, privateKey.d, privateKey.n)
-    return plaintext
-
-# Generate an RSA private key and related public key
-def generateRSAKeyPair():
-
-    # Get 2 RSA suitable prime numbers
-    firstPrime = generateRSAPrime()
-    secondPrime = generateRSAPrime()
+    # Get 2 Paillier suitable prime numbers
+    firstPrime = generatePrime()
+    secondPrime = generatePrime()
 
     # Ensure the primes are distinct
     if firstPrime == secondPrime:
 
         # Reattempt the generation
-        return generateRSAKeyPair()
+        return generateKeyPair()
 
     # Compute composite number 'n'
     n = firstPrime * secondPrime
@@ -184,21 +179,53 @@ def generateRSAKeyPair():
     # Compute the phi of 'n'
     phiN = (firstPrime - 1) * (secondPrime - 1)
 
-    # Compute a coprime of 'phiN', 'e' where 1 < e < phiN
-    eFound = False
-    while not eFound:
-        e = random.randrange(2, phiN)
-        if isProbablePrime(e) and e % phiN != 0:
-            eFound = True
+    # Compute 'g' for the public key
+    g = n + 1
 
-    # Compute 'd', the modular inverse of 'e' 'phiN', d = e^-1 mod phiN
-    d = modularInverse(e, phiN)
+    # Compute the modular inverse of 'phiN' 'n', phiN^-1 mod n
+    u = modularInverse(phiN, n)
 
     # Create the public key
-    public = PublicKey(n, e)
+    public = PublicKey(n, g)
 
     # Create the private key
-    private = PrivateKey(n, d)
+    private = PrivateKey(n, phiN, u)
 
     # Return the key pair
     return public, private
+
+# Encrypt plaintext using a Paillier public key
+def encrypt(publicKey, plaintext):
+
+    # Calculate n^2
+    nSquared = publicKey.n ** 2
+
+    # Generate a random 'r' where 1 < r < n
+    r = random.randrange(2, publicKey.n)
+
+    # Compute the cyphertext as cyphertext = (g^plaintext mod n^2) * (r^n mod n^2) mod n^2
+    cyphertext = ( pow(publicKey.g, plaintext, nSquared) *
+                   pow(r, publicKey.n, nSquared) % nSquared )
+
+    # Return the encrypted cypher
+    return cyphertext
+
+# Decrypt Paillier cyphertext using a private key
+def decrypt(privateKey, cyphertext):
+
+    # Calculate n^2
+    nSquared = privateKey.n ** 2
+
+    # Compute the plaintext as plaintext = L(cyphertext^phiN mod n^2) * u mod n
+    # Where L(x) = (x - 1) / n
+    plaintext = ( (pow(cyphertext, privateKey.phiN, nSquared) - 1)
+                   // privateKey.n * privateKey.u % privateKey.n )
+
+    # Return the decrypted plaintext
+    return plaintext
+
+# Apply a homomorphic addition to two integers encrypted by the same key
+def homomorphicAdd(publicKey, encryptedInteger1, encryptedInteger2):
+
+    # Compute the addition as result = encryptedInteger1 * encryptedInteger2 mod n^2
+    return encryptedInteger1 * encryptedInteger2 % (publicKey.n ** 2)
