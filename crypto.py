@@ -1,4 +1,4 @@
- # Import required modules
+# Import required modules
 import sys
 import random
 
