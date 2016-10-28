@@ -12,31 +12,47 @@ contract Ballot {
   uint public duration;
   uint public deadline;
   mapping (address => bool) public hasVoted;
+  uint[] public publicKey;
 
 
   // Contract constructor
   function Ballot(
-    string title,
-    string description,
-    string candidates,
-    address[] voters,
-    uint duration
+    string ballotTitle,
+    string ballotDescription,
+    string ballotCandidates,
+    address[] eligableVoters,
+    uint ballotDuration,
+    uint[] ballotPublicKey
   ) {
-    title = title;
-    description = description;
-    // TODO Deserialise candidates string to array
-    // candidates = candidates;
-    voters = voters;
-    deadline = now + duration;
+
+    // Set the internal variables
+    title = ballotTitle;
+    description = ballotDescription;
+    voters = eligableVoters;
+    deadline = now + ballotDuration;
+    publicKey = ballotPublicKey;
+
+    // Deserialise the candidates string
+    deserialiseCandidates(ballotCandidates);
+  }
+
+  // TODO Get the public key of the ballot
+  function getPublicKey() returns (uint[] publicKey) {
+
   }
 
   // TODO Vote in the ballot
-  function vote(uint[] votes) returns (bool success){
+  function vote(uint[] votes) returns (bool success) {
 
   }
 
   // TODO Get the result of the ballot
-  function result() returns (int[] votes){
+  function result() returns (int[] votes) {
+
+  }
+
+  // TODO Deserialise a candidates string into the internal array
+  function deserialiseCandidates(string candidatesString) {
 
   }
 }
