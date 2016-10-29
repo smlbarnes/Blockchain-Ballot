@@ -1,24 +1,12 @@
-# Blockchain Ballot
-# Handcrafted by Samuel Barnes
-print ''
-print 'Blockchain Ballot | Version 0.1'
+# Initalise a new ballot
+def initalise():
 
-# TODO Check dependancies
-
- # Import required modules
-import sys
-
-# Import custom modules
-import app
-import crypto
-import commands
-
-# Main program loop
-while True:
-
-    # Show the console and take user input
+    # Get the name of the ballot
+    title = raw_input("Title of the ballot: ")
     print ''
-    input = raw_input("> ")
 
-    # Attempt to run the given command
-    commands.run(input)
+    # Get the description of the ballot
+    description = raw_input("Description for the ballot: ")
+    print ''
+
+    #TODO Implement the rest of this

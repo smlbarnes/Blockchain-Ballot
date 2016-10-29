@@ -1,9 +1,11 @@
 # Import custom modules
 import app
+import ballot
 import crypto
 
 # Define the possible commands
 commandMappings = {
+    'init-ballot': ballot.initalise,
     'help': app.outputHelp,
     'quit': app.quit
 }
