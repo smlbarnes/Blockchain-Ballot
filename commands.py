@@ -1,11 +1,16 @@
 # Import custom modules
 import app
+import file
 import ballot
 import crypto
 
 # Define the possible commands
 commandMappings = {
     'init-ballot': ballot.initalise,
+    'list-keys': crypto.listKeys,
+    'import-key': file.importKey,
+    'export-key': file.exportKey,
+    'generate-key': crypto.generateNewKey,
     'help': app.outputHelp,
     'quit': app.quit
 }

@@ -2,6 +2,9 @@
 import sys
 import random
 
+# Import custom modules
+import file
+
 # Definition for a public key
 class PublicKey:
     def __init__(self, n, g):
@@ -229,3 +232,54 @@ def homomorphicAdd(publicKey, encryptedInteger1, encryptedInteger2):
 
     # Compute the addition as result = encryptedInteger1 * encryptedInteger2 mod n^2
     return encryptedInteger1 * encryptedInteger2 % (publicKey.n ** 2)
+
+# Generate and save a new set of keys
+def generateNewKey():
+
+    # Get the name for the key
+    keyName = raw_input("Please enter a name for the key: ")
+    print ''
+
+    # Generate a new key pair
+    publicKey, privateKey = generateKeyPair()
+
+    # Save the key
+    file.saveKey(keyName, publicKey, privateKey)
+
+    # Return control to the app
+    print 'Key "' + keyName + '" saved.'
+    print ''
+
+# List all the saved keys in the console
+def listKeys():
+
+    # Get the information about the saved keys
+    savedKeys = file.getSavedKeys()
+
+    # Check if any saved keys where found
+    if len(savedKeys) < 1:
+
+        # No saved keys where found
+        print 'No saved keys found.'
+
+    else:
+
+        # Loop through each saved key
+        for index in xrange(len(savedKeys)):
+
+            # Add the name of the key
+            output = savedKeys[index].name + ' - '
+
+            # Check if the key has a private key
+            if savedKeys[index].hasPrivate:
+
+                # The key has both
+                output += ' Public and Private'
+
+            else:
+
+                # The key is public only
+                output += ' Public Only'
+
+            # Display the information about this key
+            print output

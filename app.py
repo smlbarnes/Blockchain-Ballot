@@ -7,6 +7,11 @@ def outputHelp():
 
     # Print the possible commands
     print 'Commands:'
+    print 'init-ballot - Initalise a new ballot.'
+    print 'list-keys - List the keys on the system.'
+    print 'import-key - Import a key from a file.'
+    print 'export-key - Export a key to a file.'
+    print 'generate-key - Generate a new key pair.'
     print 'help - Outputs this information.'
     print 'quit - Quits the program.'
 
