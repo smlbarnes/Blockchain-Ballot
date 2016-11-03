@@ -5,6 +5,8 @@ print 'Blockchain Ballot | Version 0.1'
 
 # TODO Check dependancies
 
+# TODO Check key folders exist
+
  # Import required modules
 import sys
 

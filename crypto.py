@@ -248,7 +248,6 @@ def generateNewKey():
 
     # Return control to the app
     print 'Key "' + keyName + '" saved.'
-    print ''
 
 # List all the saved keys in the console
 def listKeys():

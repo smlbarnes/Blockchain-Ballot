@@ -103,7 +103,7 @@ def exportKey():
 
     # Ask the user which key they want to export
     print ''
-    keyId = raw_input("Please enter the name or the number of the key you want to export: ")
+    keyId = raw_input("Please enter the name or number of the key you want to export: ")
     print ''
 
     # Set the selected key flag incase the key to export cannot be found
@@ -122,8 +122,17 @@ def exportKey():
     # Check if an index was given
     if indexGiven:
 
-        # Get the key by it's index
-        selectedKey = savedKeys[int(keyId) - 1]
+        # Check that a key exists at the index
+        if len(savedKeys) <= int(keyId) - 1 or int(keyId) < 1:
+
+            # Display an error
+            print 'Sorry there is no key with that number.'
+            return
+
+        else:
+
+            # Get the key by it's index
+            selectedKey = savedKeys[int(keyId) - 1]
 
     else:
 
@@ -136,16 +145,40 @@ def exportKey():
                 # This is the key to export
                 selectedKey = savedKeys[index]
 
-    # Check that the selected key was found
-    if not selectedKey:
+        # Check that the selected key was found
+        if not selectedKey:
 
-        # Display an error
-        print 'Sorry the key "' + keyId + '''" wasn't found, did you type the name correctly?'''
+            # Display an error
+            print 'Sorry the key "' + keyId + '''" wasn't found, did you type the name correctly?'''
+            return
 
-    else:
+    # Check if there is a private key
+    if selectedKey.hasPrivate:
 
-        #
-        print 'lala'
+        # Check if the user wants to include the private key
+        includePrivateKey = raw_input("Do you want to include the private key? (y/n): ")
+        print ''
+
+    # Add the name to the export
+    export = selectedKey.name
+
+    # Add the public key to the export
+    publicKeyFile = open('keys/public/' + selectedKey.name + '.csv', 'r')
+    export += "," + publicKeyFile.read()
+
+    # Check if there is a corresponding private key and the user wanted to include it
+    if selectedKey.hasPrivate and includePrivateKey == 'y':
+
+        # Add the private key to the export
+        privateKeyFile = open('keys/private/' + selectedKey.name + '.csv', 'r')
+        export += "," + privateKeyFile.read()
+
+    # Save the export
+    exportName = selectedKey.name + ' Export.csv'
+    saveFile(exportName , export)
+
+    # Return control to the program
+    print 'Key "' + selectedKey.name + '" exported to: ' + os.getcwd() + '/' + exportName
 
 # Write to the file system
 def saveFile(filePath, content):
@@ -160,15 +193,19 @@ def saveFile(filePath, content):
     file.close()
 
 # Convert an array to a csv
-def arrayToCsv(array, csv=""):
+def arrayToCsv(array):
+
+    # Initalise the csv
+    csv=""
 
     # Loop through the array
     for index in range(len(array)):
 
-        # TODO Only add trailing comma to values that need it
+        # Only add a trailing comma if this isn't the first value
+        if index > 0: csv += ','
 
         # Append the array element to the csv
-        csv += ',' + str(array[index])
+        csv += str(array[index])
 
     # Return the completed csv
     return csv
