@@ -238,7 +238,6 @@ def generateNewKey():
 
     # Get the name for the key
     keyName = raw_input("Please enter a name for the key: ")
-    print ''
 
     # Generate a new key pair
     publicKey, privateKey = generateKeyPair()

@@ -104,7 +104,6 @@ def exportKey():
     # Ask the user which key they want to export
     print ''
     keyId = raw_input("Please enter the name or number of the key you want to export: ")
-    print ''
 
     # Set the selected key flag incase the key to export cannot be found
     selectedKey = False
