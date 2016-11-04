@@ -1,4 +1,8 @@
+# Import required modules
 import os
+
+# Import custom modules
+import crypto
 
 # Definition for a saved key
 class SavedKey:
@@ -38,7 +42,7 @@ def getSavedKeys():
     return savedKeys
 
 # Save a key to the file system
-def saveKey(keyName, publicKey, PrivateKey=False):
+def saveKey(keyName, publicKey, privateKey=False):
 
     # Convert the public key object into an array
     publicKeyArray = [publicKey.n, publicKey.g]
@@ -47,10 +51,10 @@ def saveKey(keyName, publicKey, PrivateKey=False):
     saveFile('keys/public/' + keyName + '.csv', arrayToCsv(publicKeyArray))
 
     # Check if a private key was given
-    if PrivateKey:
+    if privateKey:
 
         # Convert the private key object into an array
-        privateKeyArray = [PrivateKey.n, PrivateKey.phiN, PrivateKey.u]
+        privateKeyArray = [privateKey.n, privateKey.phiN, privateKey.u]
 
         # Save the privte key to the file system
         saveFile('keys/private/' + keyName + '.csv', arrayToCsv(privateKeyArray))
@@ -58,11 +62,39 @@ def saveKey(keyName, publicKey, PrivateKey=False):
 # Import a key
 def importKey():
 
-    # Get the file path for the public key
-    publicKeyPath = raw_input("Please give the path to the key file: ")
+    # Get the path for the key file
+    keyFilePath = raw_input("Please give the path to the key file: ")
     print ''
 
-    # Attempt to import the key
+    # Read the key file at the given path
+    keyFile = open(keyFilePath, 'r')
+    keyCsv = keyFile.read()
+
+    # Create an array of values from the key file
+    newKey = keyCsv.split(',')
+
+    # Extract the key name
+    keyName = newKey[0]
+
+    # Create a new public key
+    publicKey = crypto.PublicKey(newKey[1], newKey[2])
+
+    # Check if there is a private key
+    if len(newKey) > 3:
+
+        # Create a new private key
+        privateKey = crypto.PrivateKey(newKey[3], newKey[4], newKey[5])
+
+        # Save the complete key
+        saveKey(keyName, publicKey, privateKey)
+
+    else:
+
+        # Save the public key
+        saveKey(keyName, publicKey)
+
+    # Return control to the app
+    print 'Key "' + keyName + '" Imported.'
 
 # Export a key
 def exportKey():
@@ -178,6 +210,105 @@ def exportKey():
 
     # Return control to the program
     print 'Key "' + selectedKey.name + '" exported to: ' + os.getcwd() + '/' + exportName
+
+# Delete a saved key
+def deleteKey():
+
+    # Get the saved keys
+    savedKeys = getSavedKeys();
+
+    # Check if there are any saved keys
+    if len(savedKeys) < 1:
+
+        # No saved keys where found
+        print "You don't have any keys to export."
+
+    else:
+
+        # Loop through each saved key
+        for index in xrange(len(savedKeys)):
+
+            # Add the index of the saved key
+            output = str(index + 1) + ' - '
+
+            # Add the name of the key
+            output += savedKeys[index].name + ' - '
+
+            # Check if the key has a private key
+            if savedKeys[index].hasPrivate:
+
+                # The key has both
+                output += ' Public and Private'
+
+            else:
+
+                # The key is public only
+                output += ' Public Only'
+
+            # Display the information about this key
+            print output
+
+    # Ask the user which key they want to export
+    print ''
+    keyId = raw_input("Please enter the name or number of the key you want to export: ")
+
+    # Set the selected key flag incase the key to export cannot be found
+    selectedKey = False
+
+    # Check if an index was given
+    try:
+        int(keyId)
+    except ValueError:
+        # Set the flag for a name
+        indexGiven = False
+    else:
+        # Set the flag for an index
+        indexGiven = True
+
+    # Check if an index was given
+    if indexGiven:
+
+        # Check that a key exists at the index
+        if len(savedKeys) <= int(keyId) - 1 or int(keyId) < 1:
+
+            # Display an error
+            print 'Sorry there is no key with that number.'
+            return
+
+        else:
+
+            # Get the key by it's index
+            selectedKey = savedKeys[int(keyId) - 1]
+
+    else:
+
+        # Loop through each saved key
+        for index in xrange(len(savedKeys)):
+
+            # Check if this is the right key
+            if savedKeys[index].name == keyId:
+
+                # This is the key to export
+                selectedKey = savedKeys[index]
+
+        # Check that the selected key was found
+        if not selectedKey:
+
+            # Display an error
+            print 'Sorry the key "' + keyId + '''" wasn't found, did you type the name correctly?'''
+            return
+
+    # Delete the public key file
+    os.remove('keys/public/' + selectedKey.name + '.csv')
+
+    # Check if there is a private key
+    if selectedKey.hasPrivate:
+
+        # Delete the private key file
+        os.remove('keys/private/' + selectedKey.name + '.csv')
+
+    # Return control to the program
+    print 'Key "' + selectedKey.name + '" deleted.'
 
 # Write to the file system
 def saveFile(filePath, content):

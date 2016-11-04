@@ -7,10 +7,11 @@ import crypto
 # Define the possible commands
 commandMappings = {
     'init-ballot': ballot.initalise,
+    'generate-key': crypto.generateNewKey,
     'list-keys': crypto.listKeys,
     'import-key': file.importKey,
     'export-key': file.exportKey,
-    'generate-key': crypto.generateNewKey,
+    'delete-key': file.deleteKey,
     'help': app.outputHelp,
     'quit': app.quit
 }
