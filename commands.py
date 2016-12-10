@@ -99,6 +99,43 @@ def exportKey():
         # Return control to the program
         print 'Key "' + keyToExport.name + '" exported to: ' + os.getcwd() + '/' + keyToExport.name + ' Export.csv'
 
+# Test a key is working correctly
+def testKey():
+
+    # Show the saved keys and get the users selection
+    keyToTest = input.getKeySelection()
+
+    # Check if a key was selected
+    if keyToTest == False:
+
+        # Invalid index or name given
+        print 'Key not found.'
+
+    else:
+
+        # Check the key can be tested (has private key)
+        if keyToTest.privateKey:
+
+            # Test the key can encrypt and decrypt an integer
+            if keys.testEncryption(keyToTest):
+                print 'Encryption test passed.'
+            else:
+                print 'Encryption test failed.'
+
+            # Test the key can perform a homomorphic addition
+            if keys.testHomomorphism(keyToTest):
+                print 'Homomorphism test passed.'
+            else:
+                print 'Homomorphism test failed.'
+
+            # Return control to the program
+            print 'Test of key "' + keyToTest.name + '" complete.'
+
+        else:
+
+            # Inform the user the user there is not private key
+            print 'Key cannot be tested as there is no private key.'
+
 # Delete a key
 def deleteKey():
 
@@ -126,6 +163,7 @@ commandMappings = {
     'list-keys': listKeys,
     'import-key': importKey,
     'export-key': exportKey,
+    'test-key': testKey,
     'delete-key': deleteKey,
     'help': app.outputHelp,
     'quit': app.quit

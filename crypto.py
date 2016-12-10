@@ -198,7 +198,7 @@ def generateKeyPair():
 
 # Encrypt plaintext using a Paillier public key
 def encrypt(publicKey, plaintext):
-
+    
     # Calculate n^2
     nSquared = publicKey.n ** 2
 

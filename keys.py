@@ -15,6 +15,10 @@ class SavedKey:
         # The public key
         self.publicKey = publicKey
 
+        # Convert the public key values to integers
+        self.publicKey.n = int(self.publicKey.n)
+        self.publicKey.g = int(self.publicKey.g)
+
         # Path to the public key
         self.publicKeyFile = 'keys/public/' + name + '.csv'
 
@@ -29,6 +33,11 @@ class SavedKey:
 
             # The private key
             self.privateKey = privateKey
+
+            # Convert the private key values to integers
+            self.privateKey.n = int(self.privateKey.n)
+            self.privateKey.phiN = int(self.privateKey.phiN)
+            self.privateKey.u = int(self.privateKey.u)
 
             # Path to the public key
             self.privateKeyFile = 'keys/private/' + name + '.csv'
@@ -233,4 +242,42 @@ def keyExists(keyId):
                 return True
 
         # No matching names where found
+        return False
+
+# Check that a key can encrypt and decrypt
+def testEncryption(key):
+
+    # Retreive a random number to encrypt
+    testNumber = crypto.randomNumber(8)
+
+    # Attempt to encrypt the number
+    testCypher = crypto.encrypt(key.publicKey, testNumber)
+
+    # Decrypt the cypher and check equality
+    if testNumber == crypto.decrypt(key.privateKey, testCypher):
+        return True
+    else:
+        return False
+
+# Check that a key can perform a homomorphic addition
+def testHomomorphism(key):
+
+    # Retreive a 2 random numbers to test
+    testNumber1 = crypto.randomNumber(8)
+    testNumber2 = crypto.randomNumber(8)
+
+    # Calculate the expected addition result
+    expectedResult = testNumber1 + testNumber2
+
+    # Encrypt the numbers
+    testCypher1 = crypto.encrypt(key.publicKey, testNumber1)
+    testCypher2 = crypto.encrypt(key.publicKey, testNumber2)
+
+    # Attempt a homomorphic addition
+    resultCypher = crypto.homomorphicAdd(key.publicKey, testCypher1, testCypher2)
+
+    # Decrypt the result and check equality
+    if expectedResult == crypto.decrypt(key.privateKey, resultCypher):
+        return True
+    else:
         return False

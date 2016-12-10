@@ -12,6 +12,7 @@ def outputHelp():
     print 'list-keys - List the keys on the system.'
     print 'import-key - Import a key from a file.'
     print 'export-key - Export a key to a file.'
+    print 'test-key - Test a key is working correctly'
     print 'delete-key - Delete a saved key.'
     print 'help - Outputs this information.'
     print 'quit - Quits the program.'
