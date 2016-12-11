@@ -71,7 +71,7 @@ def getKeyByName(name):
     # Loop completed, no key found with given name
     return False
 
-# Get details on the saved keys
+# Get the saved keys
 def savedKeys():
 
     # Initalise the saved key array

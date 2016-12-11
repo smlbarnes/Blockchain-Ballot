@@ -27,11 +27,62 @@ def initaliseBallot():
     votersString = raw_input("Please enter the voter addresses separated by commas (','): ")
     voters = candidatesString.split(",")
 
+    # Get the ballot deadline
+    deadline = raw_input("Enter the deadline of the ballot: ")
+
     # Get the ballot public key
     publicKey = raw_input("Enter the public key of the ballot: ")
 
     # Initalise a ballot with the given values
-    ballot.initalise(title, description, candidates, voters, publicKey)
+    ballot.initalise(title, description, candidates, voters, deadline, publicKey)
+
+# List the ballots in the console
+def listBallots():
+    output.allBallots()
+
+# TODO Get more information about a ballot
+def ballotInfo():
+    print 'TODO'
+
+# TODO Cast a vote
+def castVote():
+    print 'TODO'
+
+# TODO Import a ballot
+def importBallot():
+    print 'TODO'
+
+# TODO Export a ballot
+def exportBallot():
+    print 'TODO'
+
+# TODO Check the integrity of a ballot's votes
+def checkIntegrity():
+    print 'TODO'
+
+# TODO Tally the votes of a ballot
+def tallyResults():
+    print 'TODO'
+
+# Delete a ballot
+def deleteBallot():
+
+    # Show the saved ballots and get the users selection
+    ballotToDelete = input.getBallotSelection()
+
+    # Check if a balloy was selected
+    if ballotToDelete == False:
+
+        # Invalid index or name given
+        print 'Ballot not found.'
+
+    else:
+
+        # Delete the ballot
+        ballot.delete(ballotToDelete)
+
+        # Return control to the program
+        print 'Ballot "' + ballotToDelete.title + '" deleted.'
 
 # Generate and save a new set of keys
 def newKey():
@@ -154,11 +205,19 @@ def deleteKey():
         keys.delete(keyToDelete)
 
         # Return control to the program
-        print 'Key ' + keyToDelete.name + ' deleted.'
+        print 'Key "' + keyToDelete.name + '" deleted.'
 
 # Define the possible commands
 commandMappings = {
     'init-ballot': initaliseBallot,
+    'list-ballots': listBallots,
+    'ballot-info': ballotInfo,
+    'cast-vote': castVote,
+    'import-ballot': importBallot,
+    'export-ballot': exportBallot,
+    'check-integrity': checkIntegrity,
+    'tally-results': tallyResults,
+    'delete-ballot': deleteBallot,
     'new-key': newKey,
     'list-keys': listKeys,
     'import-key': importKey,
@@ -184,4 +243,4 @@ def run(input):
     else:
 
         # Display an invalid command messages
-        print 'Invalid command given, use "help" to see list of valid arguments.'
+        print 'Invalid command given, use "help" to see list of valid commands.'
