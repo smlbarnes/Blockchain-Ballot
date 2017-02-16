@@ -9,6 +9,8 @@ import file
 import ballot
 import keys
 import crypto
+import solidity
+import geth
 
 # Create a new ballot
 def initaliseBallot():
@@ -25,44 +27,118 @@ def initaliseBallot():
 
     # Get the voter addresses
     votersString = raw_input("Please enter the voter addresses separated by commas (','): ")
-    voters = candidatesString.split(",")
-
-    # Get the ballot deadline
-    deadline = raw_input("Enter the deadline of the ballot: ")
+    voters = votersString.split(",")
 
     # Get the ballot public key
-    publicKey = raw_input("Enter the public key of the ballot: ")
+    print 'Select the key you want to use for the ballot.'
+    key = input.getKeySelection()
+
+    # Get the Ethereum account to use
+    print 'Select the account you want to use for the ballot.'
+    account = input.getAccountSelection()
 
     # Initalise a ballot with the given values
-    ballot.initalise(title, description, candidates, voters, deadline, publicKey)
+    ballot.initalise(account, title, description, candidates, voters, key)
 
 # List the ballots in the console
 def listBallots():
     output.allBallots()
 
-# TODO Get more information about a ballot
+# Get more information about a ballot
 def ballotInfo():
-    print 'TODO'
 
-# TODO Cast a vote
+    # Get the ballot
+    print 'Select the ballot you wish to see more information about.'
+    ballot = input.getBallotSelection()
+
+    # Display the ballot information
+    output.ballotInfo(ballot)
+
+# Cast a vote
 def castVote():
-    print 'TODO'
 
-# TODO Import a ballot
+    # Get the ballot
+    print 'Select the ballot you want to vote in.'
+    selectedBallot = input.getBallotSelection()
+
+    # Get the Ethereum account to use
+    print 'Select the account you want to use to vote.'
+    account = input.getAccountSelection()
+
+    # Display the ballot information
+    output.ballotInfo(selectedBallot, False, False)
+
+    # Get the candidate to vote for
+    print 'Select the candidate you wish to vote for.'
+    candidate = input.getCandidateSelection(selectedBallot)
+
+    # Build the vote to send
+    vote = ballot.buildVote(selectedBallot, candidate)
+
+    # Execute the vote
+    ballot.executeVote(selectedBallot, account, vote)
+
+# Import a ballot
 def importBallot():
-    print 'TODO'
 
-# TODO Export a ballot
+    # Get the path for the ballot file
+    filePath = raw_input("Please give the path to the ballot file: ")
+
+    # Import the ballot file at the given path
+    ballot.importBallot(filePath)
+
+    # Return control to the program
+    print 'Ballot at "' + filePath + '" saved.'
+
+# Export a ballot
 def exportBallot():
-    print 'TODO'
+
+    # Get the ballot
+    print 'Select the ballot you wish to export.'
+    ballotToExport = input.getBallotSelection()
+
+    # Check if a ballot was selected
+    if ballotToExport == False:
+
+        # Invalid index or name given
+        print 'Ballot not found.'
+
+    else:
+
+        # Export the ballot
+        ballot.export(ballotToExport)
+
+        # Return control to the program
+        print 'Ballot "' + ballotToExport.title + '" exported to: ' + os.getcwd() + '/' + ballotToExport.title + ' Export.csv'
+
 
 # TODO Check the integrity of a ballot's votes
 def checkIntegrity():
     print 'TODO'
 
-# TODO Tally the votes of a ballot
+# Tally the votes of a ballot
 def tallyResults():
-    print 'TODO'
+
+    # Get the ballot
+    ballotToTally = input.getBallotSelection()
+
+    # Show the saved keys and get the users selection
+    print 'Select the key used for the ballot. You need the private key to view the result.'
+    key = input.getKeySelection()
+
+    # Check that the user has the private key
+    if (key.privateKey == False):
+
+        # Alert the user they do not possess the private key
+        print 'Private key not found for the selected key.'
+
+    else:
+
+        # Get the votes
+        votes = ballot.getVotes(ballotToTally)
+
+        # Calculate the result using the key
+        results = crypto.addVotes(votes, key.publicKey)
 
 # Delete a ballot
 def deleteBallot():
@@ -83,6 +159,10 @@ def deleteBallot():
 
         # Return control to the program
         print 'Ballot "' + ballotToDelete.title + '" deleted.'
+
+# List the accounts in the console
+def listAccounts():
+    output.allAccounts()
 
 # Generate and save a new set of keys
 def newKey():
@@ -218,6 +298,7 @@ commandMappings = {
     'check-integrity': checkIntegrity,
     'tally-results': tallyResults,
     'delete-ballot': deleteBallot,
+    'list-accounts': listAccounts,
     'new-key': newKey,
     'list-keys': listKeys,
     'import-key': importKey,

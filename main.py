@@ -5,8 +5,6 @@ print 'Blockchain Ballot | Version 0.1'
 
 # TODO Check dependancies
 
-# TODO Check key folders exist
-
  # Import required modules
 import sys
 
@@ -18,6 +16,14 @@ import app
 import ballot
 import crypto
 import commands
+import geth
+
+# Check if a geth instance with rpc is running
+if not geth.rpcRunning():
+
+    # Show a warning
+    print ''
+    print 'WARNING! Geth instance either not running or doesn\'t have rpc enabled.'
 
 # Main program loop
 while True:

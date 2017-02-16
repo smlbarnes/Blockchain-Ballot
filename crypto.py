@@ -198,7 +198,7 @@ def generateKeyPair():
 
 # Encrypt plaintext using a Paillier public key
 def encrypt(publicKey, plaintext):
-    
+
     # Calculate n^2
     nSquared = publicKey.n ** 2
 
@@ -231,3 +231,32 @@ def homomorphicAdd(publicKey, encryptedInteger1, encryptedInteger2):
 
     # Compute the addition as result = encryptedInteger1 * encryptedInteger2 mod n^2
     return encryptedInteger1 * encryptedInteger2 % (publicKey.n ** 2)
+
+# Add the encrypted votes of a ballot
+def addVotes(votes, publicKey):
+
+    # Initalise results array
+    results = []
+
+    # Calculate the number of candidates
+    candidateCount = len(votes[0])
+
+    # Loop through each vote
+    for index in xrange(len(votes)):
+
+        # Check if this is the first vote
+        if len(results) == 0:
+
+            # Simply add the values
+            results = votes[index]
+
+        else:
+
+            # Loop through each value
+            for valueIndex in xrange(candidateCount):
+
+                # homomorphicly add this value to the result
+                results[valueIndex] = homomorphicAdd(publicKey, results[valueIndex], votes[index][valueIndex])
+
+    # Return the encrypted results
+    return results
