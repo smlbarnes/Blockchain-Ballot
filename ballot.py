@@ -299,11 +299,39 @@ def executeVote(ballotAddress, account, vote):
     # Loop through each 2056 bit vote value
     for voteIndex in xrange(len(vote)):
 
-        # Split the vote value into sendable 256 bit chunks
-        for index in xrange(8):
+        # Convert the value to hex
+        voteHex = geth.numberToHex(vote[voteIndex])
 
-            # Add this 256 bit chunk
-            sendableVotes.append(geth.numberToHex(vote[voteIndex])[64*index:64*(index + 1)])
+        # Get the length of the hex
+        hexLength = len(str(voteHex))
+
+        # Check if the hex is less than 512
+        if hexLength < 512:
+
+            # Get how much to pad the first value by
+            paddingRequired = 512 - hexLength
+
+            # Split the vote value into sendable 256 bit chunks
+            for index in xrange(8):
+
+                # Check if this is the first chunk
+                if index == 0:
+
+                    # Add this 256 bit chunk
+                    sendableVotes.append(voteHex[64*index:64*(index + 1)-paddingRequired])
+
+                else:
+
+                    # Add this 256 bit chunk
+                    sendableVotes.append(voteHex[64*index-paddingRequired:64*(index + 1)-paddingRequired])
+
+        else:
+
+            # Split the vote value into sendable 256 bit chunks
+            for index in xrange(8):
+
+                # Add this 256 bit chunk
+                sendableVotes.append(voteHex[64*index:64*(index + 1)])
 
     # Initalise the vote bytecode with the offset
     voteBytecode = geth.pad(geth.numberToHex(32))
@@ -355,6 +383,7 @@ def buildVote(ballot, candidateIndex):
 
     # Loop through each candidate in the ballot
     for index in xrange(len(getCandidates(ballot))):
+
 
         # Check if this is the candidate to vote for
         if (index == candidateIndex):
@@ -440,7 +469,7 @@ def getVotes(ballot):
             for valueIndex in xrange(8):
 
                 # Compile this vote
-                voteValue += str(voteValues[((index + candidateIndex) * 8) + valueIndex]).lstrip('0')
+                voteValue += str(voteValues[((index * (candidateCount * 8)) + (candidateIndex) * 8) + valueIndex])
 
             # Add the vote value to the vote array
             votes[index].append(geth.hexToNumber(voteValue))

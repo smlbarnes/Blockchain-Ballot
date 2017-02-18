@@ -233,7 +233,7 @@ def homomorphicAdd(publicKey, encryptedInteger1, encryptedInteger2):
     return encryptedInteger1 * encryptedInteger2 % (publicKey.n ** 2)
 
 # Add the encrypted votes of a ballot
-def addVotes(votes, publicKey):
+def addVotes(votes, publicKey, privateKey):
 
     # Initalise results array
     results = []
@@ -243,9 +243,9 @@ def addVotes(votes, publicKey):
 
     # Loop through each vote
     for index in xrange(len(votes)):
-
+        
         # Check if this is the first vote
-        if len(results) == 0:
+        if index == 0:
 
             # Simply add the values
             results = votes[index]

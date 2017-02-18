@@ -136,9 +136,13 @@ def tallyResults():
 
         # Get the votes
         votes = ballot.getVotes(ballotToTally)
-
+        
         # Calculate the result using the key
-        results = crypto.addVotes(votes, key.publicKey)
+        results = crypto.addVotes(votes, key.publicKey, key.privateKey)
+
+        print 'Results: '
+        for index in xrange(len(results)):
+            print 'Candidate ' + str(index) + ': ' + str(crypto.decrypt(key.privateKey, results[index]))
 
 # Delete a ballot
 def deleteBallot():

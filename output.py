@@ -114,7 +114,7 @@ def allAccounts(showIndexes=False, showAccountDetail=True):
                 output += str(index + 1) + ' - '
 
             # Add the address of the account
-            output += accounts[index]
+            output += accounts[index].lstrip('0x')
 
             # Check if details about the account are to be shown
             if showAccountDetail:
