@@ -5,12 +5,9 @@ import os
 import app
 import input
 import output
-import file
 import ballot
 import keys
 import crypto
-import solidity
-import geth
 
 # Create a new ballot
 def initaliseBallot():
@@ -136,13 +133,13 @@ def tallyResults():
 
         # Get the votes
         votes = ballot.getVotes(ballotToTally)
-        
+
         # Calculate the result using the key
-        results = crypto.addVotes(votes, key.publicKey, key.privateKey)
+        results = crypto.addVotes(votes, key.publicKey)
 
         print 'Results: '
         for index in xrange(len(results)):
-            print 'Candidate ' + str(index) + ': ' + str(crypto.decrypt(key.privateKey, results[index]))
+            print 'Candidate ' + str(index+1) + ': ' + str(crypto.decrypt(key.privateKey, results[index]))
 
 # Delete a ballot
 def deleteBallot():

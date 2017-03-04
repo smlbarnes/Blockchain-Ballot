@@ -12,9 +12,6 @@ import sys
 sys.dont_write_bytecode = True
 
 # Import custom modules
-import app
-import ballot
-import crypto
 import commands
 import geth
 

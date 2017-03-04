@@ -54,20 +54,6 @@ def accounts():
     # Return the list of accounts
     return response['result']
 
-# Unlock an account
-def unlockAccount(account, password):
-
-    # Define the request
-    method = 'POST'
-    data = {"jsonrpc": "2.0", "method": "eth_accounts", "params": [], "id": 1}
-    headers = ''
-
-    # Attempt the request
-    response = rpcRequest(method, data, headers)
-
-    # Return the list of accounts
-    return response['result']
-
 # Returns the balance of an address
 def getBalance(address):
 
@@ -87,7 +73,7 @@ def deployContract(account, bytecode):
 
     # Define the request
     method = 'POST'
-    data = {'jsonrpc': '2.0', 'method': 'eth_sendTransaction', 'params': [{'from': account, 'gas': '0x200000', 'data': bytecode}], 'id': 1}
+    data = {'jsonrpc': '2.0', 'method': 'eth_sendTransaction', 'params': [{'from': account, 'gas': '0x2000000', 'data': bytecode}], 'id': 1}
     headers = ''
 
     # Attempt the request
