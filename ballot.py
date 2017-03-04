@@ -296,7 +296,7 @@ def executeVote(ballotAddress, account, vote):
     # Initalise the sendable votes
     sendableVotes = []
 
-    # Loop through each 2056 bit vote value
+    # Loop through each 2048 bit vote value
     for voteIndex in xrange(len(vote)):
 
         # Convert the value to hex

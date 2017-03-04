@@ -79,7 +79,7 @@ contract Ballot {
         if(!hasVoted[sender]) {
 
           // Check the vote is of the correct length
-          // Each vote is 2056 bits long represented in 8 256 bit integers
+          // Each vote is 2048 bits long represented in 8 256 bit integers
           if(vote.length == candidatesCount * 8) {
 
               // Loop through the votes
