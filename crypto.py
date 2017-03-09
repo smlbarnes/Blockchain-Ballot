@@ -122,7 +122,7 @@ def generatePrime():
     # Loop until a suitable prime is found
     while True:
 
-        # Generate a number of 512 bits
+        # Generate a prime number of 512 bits
         possiblePrime = randomNumber(512)
 
         # Return the number if it is a probable prime
