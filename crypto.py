@@ -25,7 +25,7 @@ class PrivateKey:
         # 'phiN' is the phi of the two primes chosen for the key
         self.phiN = phiN
 
-        # 'u' is the modular inverse of e mod phi(n)
+        # 'u' is the modular inverse of n mod phi(n)
         self.u = u
 
 # Generate a random number of 'n' bits from the system entropy function
@@ -202,8 +202,8 @@ def encrypt(publicKey, plaintext):
     # Calculate n^2
     nSquared = publicKey.n ** 2
 
-    # Generate a random 'r' where 1 < r < n
-    r = random.randrange(2, publicKey.n)
+    # Generate a random 'r' where 1 < r < n - 1
+    r = random.randrange(2, publicKey.n - 1)
 
     # Compute the cyphertext as cyphertext = (g^plaintext mod n^2) * (r^n mod n^2) mod n^2
     cyphertext = ( pow(publicKey.g, plaintext, nSquared) *
