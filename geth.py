@@ -240,8 +240,6 @@ def responseToInteger(response):
 def responseToString(response):
     return hexToString(response[130:])
 
-#TODO Convert a boolean hex output from a ballot into a boolean value
-
 # Convert a candidates hex output from a ballot into an array
 def responseToCandidates(response):
     return responseToString(response).split(',')
