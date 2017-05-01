@@ -3,8 +3,6 @@
 print ''
 print 'Blockchain Ballot | Version 0.1'
 
-# TODO Check dependancies
-
  # Import required modules
 import sys
 
