@@ -137,7 +137,7 @@ def savedBallots():
 def delete(ballot):
 
     # Delete the ballot file
-    file.delete('ballots/' + ballot.title + '.csv')
+    file.delete('ballots/' + ballot.title + '.ballot')
 
 # Initalise a new ballot
 def initalise(account, title, description, candidates, voters, key):
