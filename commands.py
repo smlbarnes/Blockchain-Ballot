@@ -108,11 +108,6 @@ def exportBallot():
         # Return control to the program
         print 'Ballot "' + ballotToExport.title + '" exported to: ' + os.getcwd() + '/' + ballotToExport.title + ' Export.csv'
 
-
-# TODO Check the integrity of a ballot's votes
-def checkIntegrity():
-    print 'TODO'
-
 # Tally the votes of a ballot
 def tallyResults():
 
