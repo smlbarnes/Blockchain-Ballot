@@ -291,7 +291,6 @@ commandMappings = {
     'cast-vote': castVote,
     'import-ballot': importBallot,
     'export-ballot': exportBallot,
-    'check-integrity': checkIntegrity,
     'tally-results': tallyResults,
     'delete-ballot': deleteBallot,
     'list-accounts': listAccounts,
